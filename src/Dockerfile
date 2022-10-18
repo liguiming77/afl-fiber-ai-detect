@@ -78,7 +78,7 @@ RUN echo "trusted-host = mirrors.aliyun.com">>~/.pip/pip.conf
 
 COPY  . /app/
 WORKDIR /app/
-RUN python3.6 -m pip install pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/
+RUN python3.6 -m pip install pip install -r requirements.txt -i  https://pypi.douban.com/simple
 CMD ["python3", "app.py"]
 
 
