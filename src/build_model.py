@@ -8,7 +8,8 @@ from pathlib import Path
 from collections import OrderedDict,namedtuple
 import torch
 import torchvision
-
+from loguru import logger as logging
+logging.add('fiber.log')
 names = ['danwei','maobianchang','lashang','jingtiao','daiwei','baitiao','cuoge','tingchedang','duanwei','quwei','weibuliang','zhouyin','wuzhi','biandang','duanersi','tiaohua','sanbian','yousi','cabai','songdang','youwu','jieweidang','tawei','chongwei','duanjing','shuangwei','songjinjing','pobian','yabian','maowei','jinjing','shuiyin','cuwei','podong']
 
 def letterbox(im, new_shape=(640, 640), color=(114, 114, 114), auto=True, scaleup=True, stride=32):
@@ -219,12 +220,13 @@ def predict2(pic):
 class predictor:
     def __init__(self, weight="weights/yolov6n_jit.pth"):
         self.model = torch.jit.load(weight, map_location=torch.device('cpu'))
-    def predict(pic_url):
-        resp_img = request.urlopen(pic_url, timeout=8)
-        img_np = np.asarray(bytearray(resp_img.read()), dtype='uint8')
-        img = cv2.imdecode(img_np, cv2.IMREAD_UNCHANGED)
+    def predict(self,img_cv):
+
+        # resp_img = request.urlopen(pic_url, timeout=8)
+        # img_np = np.asarray(bytearray(resp_img.read()), dtype='uint8')
+        # img = cv2.imdecode(img_np, cv2.IMREAD_UNCHANGED)
         # img = cv2.imread(pic)
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        img = cv2.cvtColor(img_cv, cv2.COLOR_BGR2RGB)
         img_src = img.copy()
         image, ratio, dwdh = letterbox(img_src, auto=True)
         image = image.transpose((2, 0, 1))
@@ -233,7 +235,9 @@ class predictor:
         image = image.astype(np.float32)
         image = np.ascontiguousarray(image / 255)
         image = torch.tensor(image)
-        out = model(image)
+
+        out = self.model(image)
+
         det = non_max_suppression(out, conf_thres=0.4, iou_thres=0.45, classes=None, agnostic=False, max_det=300)[0]
         img_ori = img_src.copy()
         assert img_ori.data.contiguous, 'Image needs to be contiguous. Please apply to input images with np.ascontiguousarray(im).'
@@ -245,8 +249,9 @@ class predictor:
             det[:, :4] = rescale(image.shape[2:], det[:, :4], img_src.shape).round()
             for *xyxy, conf, cls in reversed(det):
                 xyxys.append([int(w) for w in xyxy])
-                confs.append(conf.float())
+                confs.append(round(float(conf),3) )
                 clss.append(cls.int())
                 name_ens.append(names[cls.int()])
+
         return xyxys,confs,name_ens
 
