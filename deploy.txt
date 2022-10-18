@@ -1,0 +1,53 @@
+1. build iamge
+cd src
+docker build -t fiber .
+2. start container service
+docker run  --rm   --name=fiber-detect-servie  -v  /dir/to/save/pics:/datasets    -p yourport:8080    --shm-size 8G  --ulimit core=-1 --security-opt seccomp=unconfined  -tid  fiber
+3. 接口说明
+   3.1 地址: http://127.0.0.1:yourport/afl-fiber-ai-detect
+   3.2 调用方式: http  post
+   3.3 输入参数形如：
+   {
+
+        "data": "wuzhi.jpg"
+
+    }
+    3.4 输出形如：
+    {
+    "desc": "OK",
+    "result": {
+        "class_names": [
+            "wuzhi",
+            "wuzhi",
+            "wuzhi"
+        ],
+        "confs": [
+            0.848,
+            0.913,
+            0.92
+        ],
+        "xyxys": [
+            [
+                457,
+                430,
+                607,
+                1106
+            ],
+            [
+                507,
+                303,
+                597,
+                831
+            ],
+            [
+                440,
+                852,
+                586,
+                1174
+            ]
+        ]
+    },
+    "status": 200
+}
+4.调用实例
+curl -H "Content-Type: application/json" -X POST -d '{"data": "wuzhi.jpg"}'  http://127.0.0.1:yourport/afl-fiber-ai-detect

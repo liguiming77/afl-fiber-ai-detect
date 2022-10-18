@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/afl-fiber-ai-detect.iml" filepath="$PROJECT_DIR$/.idea/afl-fiber-ai-detect.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/afl-addzone-ai-detect.iml" filepath="$PROJECT_DIR$/.idea/afl-addzone-ai-detect.iml" />
     </modules>
   </component>
 </project>
