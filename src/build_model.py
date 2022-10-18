@@ -3,11 +3,13 @@ import time
 import random
 import numpy as np
 # import onnxruntime as ort
-from PIL import Image
-from pathlib import Path
-from collections import OrderedDict,namedtuple
+# from PIL import Image
+# from pathlib import Path
+# from collections import OrderedDict,namedtuple
 import torch
 import torchvision
+import os
+
 
 names = ['danwei','maobianchang','lashang','jingtiao','daiwei','baitiao','cuoge','tingchedang','duanwei','quwei','weibuliang','zhouyin','wuzhi','biandang','duanersi','tiaohua','sanbian','yousi','cabai','songdang','youwu','jieweidang','tawei','chongwei','duanjing','shuangwei','songjinjing','pobian','yabian','maowei','jinjing','shuiyin','cuwei','podong']
 
@@ -168,53 +170,53 @@ def generate_colors(i, bgr=False):
     return (color[2], color[1], color[0]) if bgr else color
 
 
-
-def predict2(pic):
-    pic_base = pic.split('/')[-1].replace('.jpg','_draw.jpg')
-    save_img = True
-    img = cv2.imread(pic)
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    img_src = img.copy()
-    image, ratio, dwdh = letterbox(img_src, auto=True)
-    image = image.transpose((2, 0, 1))
-    image = np.expand_dims(image, 0)
-    image = np.ascontiguousarray(image)
-    image = image.astype(np.float32)
-    # print(im.shape)
-    # assert 1>2
-    # outname = [i.name for i in session.get_outputs()]
-    # inname = [i.name for i in session.get_inputs()]
-    image = np.ascontiguousarray(image / 255)
-    image = torch.tensor(image)
-    # print(im.shape)
-    # out = session.run(outname, {'images': im})
-    out = model(image)
-    det = non_max_suppression(out, conf_thres=0.4, iou_thres=0.45, classes=None, agnostic=False, max_det=300)[0]
-    gn = torch.tensor(img_src.shape)[[1, 0, 1, 0]]
-    img_ori = img_src.copy()
-    assert img_ori.data.contiguous, 'Image needs to be contiguous. Please apply to input images with np.ascontiguousarray(im).'
-    # print(out.shape)
-    # print(out[0])
-    if len(det):
-        det[:, :4] = rescale(image.shape[2:], det[:, :4], img_src.shape).round()
-        for *xyxy, conf, cls in reversed(det):
-            # if save_txt:  # Write to file
-            #     xywh = (self.box_convert(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh [centerx,centery,w,h]
-            #     line = (cls, *xywh, conf)
-            #     with open(txt_path + '.txt', 'a') as f:
-            #         f.write(('%g ' * len(line)).rstrip() % line + '\n')
-
-            if save_img:
-                class_num = int(cls)  # integer class
-                label =  f'{names[class_num]} {conf:.2f}'
-                # print(label)
-                # assert 1>2
-                plot_box_and_label(img_ori, max(round(sum(img_ori.shape) / 2 * 0.003), 2), xyxy, label,
-                                        color=generate_colors(class_num, True))
-
-        img_src = np.asarray(img_ori)
-        cv2.imwrite('runs/predict/'+pic_base, img_src)
-    return img_src
+#
+# def predict2(pic):
+#     pic_base = pic.split('/')[-1].replace('.jpg','_draw.jpg')
+#     save_img = True
+#     img = cv2.imread(pic)
+#     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+#     img_src = img.copy()
+#     image, ratio, dwdh = letterbox(img_src, auto=True)
+#     image = image.transpose((2, 0, 1))
+#     image = np.expand_dims(image, 0)
+#     image = np.ascontiguousarray(image)
+#     image = image.astype(np.float32)
+#     # print(im.shape)
+#     # assert 1>2
+#     # outname = [i.name for i in session.get_outputs()]
+#     # inname = [i.name for i in session.get_inputs()]
+#     image = np.ascontiguousarray(image / 255)
+#     image = torch.tensor(image)
+#     # print(im.shape)
+#     # out = session.run(outname, {'images': im})
+#     out = model(image)
+#     det = non_max_suppression(out, conf_thres=0.4, iou_thres=0.45, classes=None, agnostic=False, max_det=300)[0]
+#     gn = torch.tensor(img_src.shape)[[1, 0, 1, 0]]
+#     img_ori = img_src.copy()
+#     assert img_ori.data.contiguous, 'Image needs to be contiguous. Please apply to input images with np.ascontiguousarray(im).'
+#     # print(out.shape)
+#     # print(out[0])
+#     if len(det):
+#         det[:, :4] = rescale(image.shape[2:], det[:, :4], img_src.shape).round()
+#         for *xyxy, conf, cls in reversed(det):
+#             # if save_txt:  # Write to file
+#             #     xywh = (self.box_convert(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh [centerx,centery,w,h]
+#             #     line = (cls, *xywh, conf)
+#             #     with open(txt_path + '.txt', 'a') as f:
+#             #         f.write(('%g ' * len(line)).rstrip() % line + '\n')
+#
+#             if save_img:
+#                 class_num = int(cls)  # integer class
+#                 label =  f'{names[class_num]} {conf:.2f}'
+#                 # print(label)
+#                 # assert 1>2
+#                 plot_box_and_label(img_ori, max(round(sum(img_ori.shape) / 2 * 0.003), 2), xyxy, label,
+#                                         color=generate_colors(class_num, True))
+#
+#         img_src = np.asarray(img_ori)
+#         cv2.imwrite('runs/predict/'+pic_base, img_src)
+#     return img_src
 
 class predictor:
     def __init__(self, weight="weights/yolov6n_jit.pth"):
@@ -223,8 +225,8 @@ class predictor:
 
         # resp_img = request.urlopen(pic_url, timeout=8)
         # img_np = np.asarray(bytearray(resp_img.read()), dtype='uint8')
-        # img = cv2.imdecode(img_np, cv2.IMREAD_UNCHANGED)
-        # img = cv2.imread(pic)
+        # img = cv2.imdecode(img_np, cv2.IMREAD_UNCHANGED) 1
+        # img = cv2.imread(pic) 2 1=2
         img = cv2.cvtColor(img_cv, cv2.COLOR_BGR2RGB)
         img_src = img.copy()
         image, ratio, dwdh = letterbox(img_src, auto=True)

@@ -19,6 +19,7 @@ from utils import get_prediction  #,load_mode
 from build_model import predictor
 from loguru import logger as logging
 logging.add('fiber.log')
+pic_save_dir = '/datasets'#'/pic_save_dir'
 DOWNLOAD_FAIL=401
 PREDICT_FAIL=402
 SUCCESS=200
@@ -40,6 +41,7 @@ def fiber_predict():
         # img_bytes = file.read()
         # 请求参数
         img_url = request.json.get('data',None)
+        img_url = os.path.join(pic_save_dir,img_url)
         # logging.info(img_url)
         if img_url:
             # 运行模型得到结果

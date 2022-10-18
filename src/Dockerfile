@@ -38,8 +38,8 @@ RUN  python3.6 -m pip   install wheel
 RUN  python3.6 -m pip  install setuptools
 
 
-COPY  requirements.txt /mdata/
-WORKDIR /mdata/
+COPY  . /app/
+WORKDIR /app/
 #RUN python3.6 -m pip install pip install -r requirements.txt -i https://mirrors.cloud.tencent.com/pypi/simple
 #RUN python3.6 -m pip install pip install -r requirements.txt -i https://pypi.douban.com/simple
 RUN python3.6 -m pip install pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/
@@ -47,4 +47,4 @@ RUN python3.6 -m pip install pip install -r requirements.txt -i https://mirrors.
 
 # WORKDIR /
 
-CMD ["python3.6", "main/api/server.py"]
+CMD ["python3.6", "app.py"]

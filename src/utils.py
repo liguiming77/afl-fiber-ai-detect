@@ -48,19 +48,19 @@ def get_input(img_url):
     # 根据url抓包获取数据,解码得到图片,Numpy格式
     down_image_start_time = time.time()
     try:
-        resp_img_src = request.urlopen(img_url, timeout=8)
-
+        # resp_img_src = request.urlopen(img_url, timeout=8)
+        img = cv2.imread(img_url)
     except Exception as e:
         return None
         # return 'parse image error.'
     else:
         down_image_take_time = time.time() - down_image_start_time
         transform_image_start_time = time.time()
-        img_np = np.asarray(bytearray(resp_img_src.read()), dtype='uint8')
-        # numpy array to opencv image
-
-        img_cv = cv2.imdecode(img_np, cv2.IMREAD_UNCHANGED)
-
+        # img_np = np.asarray(bytearray(resp_img_src.read()), dtype='uint8')
+        # # numpy array to opencv image
+        #
+        # img_cv = cv2.imdecode(img_np, cv2.IMREAD_UNCHANGED)
+        img_cv = img
         # img = cv2.resize(img, (640, 360))
         # Opencv image  to PIL image
         # if rgb_form:
