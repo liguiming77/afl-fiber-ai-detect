@@ -8,8 +8,7 @@ from pathlib import Path
 from collections import OrderedDict,namedtuple
 import torch
 import torchvision
-from loguru import logger as logging
-logging.add('fiber.log')
+
 names = ['danwei','maobianchang','lashang','jingtiao','daiwei','baitiao','cuoge','tingchedang','duanwei','quwei','weibuliang','zhouyin','wuzhi','biandang','duanersi','tiaohua','sanbian','yousi','cabai','songdang','youwu','jieweidang','tawei','chongwei','duanjing','shuangwei','songjinjing','pobian','yabian','maowei','jinjing','shuiyin','cuwei','podong']
 
 def letterbox(im, new_shape=(640, 640), color=(114, 114, 114), auto=True, scaleup=True, stride=32):

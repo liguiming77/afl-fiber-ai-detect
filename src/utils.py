@@ -14,8 +14,7 @@ from torchvision.transforms import RandomResizedCrop
 from torchvision.transforms import functional as F
 from model import *
 # import selectivesearch
-from loguru import logger as logging
-logging.add('fiber.log')
+
 DOWNLOAD_FAIL=401
 PREDICT_FAIL=402
 SUCCESS=200
