@@ -10,8 +10,6 @@ flask
 gunicorn
 efficientnet_pytorch
 loguru
-#chinesecalendar
-#tensorboardX==2.4.1
-#six==1.16.0
+
 
 

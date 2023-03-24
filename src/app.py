@@ -3,13 +3,7 @@ author: gm.li
 """
 import json
 # coding = gbk
-import time
-from datetime import datetime, date
-from functools import wraps
 
-import numpy as np
-import torch
-# from chinese_calendar import is_holiday
 from flask import Flask, jsonify
 from flask import request
 # from joblib import load
@@ -29,8 +23,6 @@ app = Flask(__name__)
 # -------------------Load Model Into Global---------------------
 # 图片识别模型
 predict_model = predictor(weight="image_model/yolov6n_jit.pth")
-
-
 
 
 # 图片识别接口
